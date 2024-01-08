@@ -63,31 +63,56 @@ function extractMetaDescription(html) {
 // Function to extract heading tags from HTML
 function extractHeadingTags(html) {
   const $ = cheerio.load(html);
-  const headingTags = [];
+  const headingTagsWithTags = [];
+
   $('h1, h2, h3, h4, h5, h6').each((index, element) => {
-    headingTags.push($(element).text());
+    const tag = $(element).prop("tagName").toLowerCase();
+    const text = $(element).text();
+    headingTagsWithTags.push({ tag, text });
   });
-  return headingTags;
+
+  return headingTagsWithTags;
 }
+
 
 // Function to extract internal and external links from HTML
 function extractLinks(html, baseUrl) {
   const $ = cheerio.load(html);
+
   const internalLinks = [];
   const externalLinks = [];
 
+  // Iterate over each 'a' anchor tag in the HTML
   $('a').each((index, element) => {
+    
     const href = $(element).attr('href');
+
+    
     if (href) {
+      // Resolve the URL to make it absolute
       const absoluteUrl = url.resolve(baseUrl, href);
-      if (absoluteUrl.startsWith(baseUrl)) {
-        internalLinks.push(absoluteUrl);
-      } else {
-        externalLinks.push(absoluteUrl);
+
+      // Check if the 'a' tag contains an 'img' tag
+      const isImageLink = $(element).find('img').length > 0;
+
+      // Check if the 'href' ends with common image file extensions or pdf
+      const isFileLink = /\.(jpg|jpeg|png|gif|pdf)$/i.test(href);
+
+      // Check if it's not an image link and not a file link
+      if (!isImageLink && !isFileLink) {
+        // Check if the absolute URL starts with the base URL
+        if (absoluteUrl.startsWith(baseUrl)) {
+          // If true, it's an internal link, so push to internalLinks array
+          internalLinks.push(absoluteUrl);
+        } else {
+          // If false, it's an external link, so push to externalLinks array
+          externalLinks.push(absoluteUrl);
+        }
       }
     }
   });
 
+  // Return the extracted internal and external links
   return { internalLinks, externalLinks };
 }
 

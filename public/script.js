@@ -25,7 +25,9 @@ async function scrape() {
             </div>
             <div class="output-section">
                 <p>Heading Tags:</p>
-                <ul>${data.headingTags.map(tag => `<li>${tag}</li>`).join('')}</ul>
+                <ul>
+                    ${data.headingTags.map(tagInfo => `<li>${tagInfo.tag}: ${tagInfo.text}</li>`).join('')}
+                </ul>
             </div>
             <div class="output-section">
                 <p>Internal Links:</p>
