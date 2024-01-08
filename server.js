@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 // Define a route for handling web scraping requests
 app.post('/scrape', async (req, res) => {
-  const targetUrl = req.body.url; // Extract the target URL from the request body
+  const targetUrl = req.body.url; 
 
   try {
     // Fetch HTML content from the target URL
@@ -40,7 +40,6 @@ app.post('/scrape', async (req, res) => {
     });
   } catch (error) {
     console.error('Error:', error.message);
-    // If an error occurs, send a 500 Internal Server Error response with the error message
     res.status(500).json({ error: error.message });
   }
 });
@@ -51,7 +50,6 @@ async function fetchData(url) {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    // If an error occurs during the fetch, throw an error with a descriptive message
     throw new Error(`Error fetching data from ${url}: ${error.message}`);
   }
 }
